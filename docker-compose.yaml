@@ -4,3 +4,18 @@ services:
     image: postgres:9.6
     environment: 
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      # Volume dos dados
+      - dados:/var/lib/postgresql/data
+      # Scripts
+      - ./scripts:/scripts
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  dados:

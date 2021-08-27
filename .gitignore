@@ -1,1 +1,2 @@
 .env
+scripts/docker-entrypoint-initdb.d/
