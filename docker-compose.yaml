@@ -7,7 +7,7 @@ services:
     volumes:
       - dados:/var/lib/postgresql/data
       - ./scripts:/scripts
-      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql      
     networks:
       - banco
   
@@ -29,6 +29,12 @@ services:
       - ./app:/app
     working_dir: /app
     command: bash ./app.sh
+    environment: 
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_HOST: ${DB_HOST}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
     networks: 
       - banco
       - web
@@ -43,11 +49,15 @@ services:
       - fila
   
   worker:
-    image: python:3.6
+    build: 
+      context: ./worker
+      dockerfile: Dockerfile
     volumes:
       - ./worker:/worker
     working_dir: /worker
-    command: bash ./app.sh
+    command: worker.py
+    environment: 
+      REDIS_HOST: ${REDIS_HOST}
     networks: 
       - fila
     depends_on: 
